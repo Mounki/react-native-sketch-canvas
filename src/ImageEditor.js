@@ -44,6 +44,7 @@ class ImageEditor extends React.Component {
         scale: PropTypes.number,
 
         touchEnabled: PropTypes.bool,
+        requireWritePermission: PropTypes.bool,
 
         text: PropTypes.arrayOf(
             PropTypes.shape({
@@ -90,6 +91,7 @@ class ImageEditor extends React.Component {
         scale: 1,
 
         touchEnabled: true,
+        requireWritePermission: true,
 
         text: null,
         localSourceImage: null,
@@ -307,10 +309,12 @@ class ImageEditor extends React.Component {
     }
 
     async componentDidMount() {
-        const isStoragePermissionAuthorized = await requestPermissions(
-            this.props.permissionDialogTitle,
-            this.props.permissionDialogMessage
-        );
+        if(this.props.requireWritePermission) {
+            const isStoragePermissionAuthorized = await requestPermissions(
+                this.props.permissionDialogTitle,
+                this.props.permissionDialogMessage
+            );
+        }
     }
 
     render() {
