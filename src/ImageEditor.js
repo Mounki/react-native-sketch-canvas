@@ -117,16 +117,17 @@ class ImageEditor extends React.Component {
         this._size = { width: 0, height: 0 };
         this._initialized = false;
 
-        this.state.text = this._processText(props.text ? props.text.map((t) => Object.assign({}, t)) : null);
+        this.state.text = ImageEditor._processText(props.text ? props.text.map((t) => Object.assign({}, t)) : null);
+        this.createPanResponder();
     }
 
-    componentWillReceiveProps(nextProps) {
-        this.setState({
-            text: this._processText(nextProps.text ? nextProps.text.map((t) => Object.assign({}, t)) : null)
-        });
+    static getDerivedStateFromProps(nextProps, prevState){
+        return {
+            text: ImageEditor._processText(nextProps.text ? nextProps.text.map((t) => Object.assign({}, t)) : null)
+        };
     }
 
-    _processText(text) {
+    static _processText(text) {
         text && text.forEach((t) => (t.fontColor = processColor(t.fontColor)));
         return text;
     }
@@ -240,7 +241,7 @@ class ImageEditor extends React.Component {
         }
     }
 
-    componentWillMount() {
+    createPanResponder() {
         this.panResponder = PanResponder.create({
             // Ask to be the responder:
             onStartShouldSetPanResponder: (evt, gestureState) => true,
