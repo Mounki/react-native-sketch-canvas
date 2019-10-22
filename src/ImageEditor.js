@@ -244,10 +244,10 @@ class ImageEditor extends React.Component {
     createPanResponder() {
         this.panResponder = PanResponder.create({
             // Ask to be the responder:
-            onStartShouldSetPanResponder: (evt, gestureState) => true,
-            onStartShouldSetPanResponderCapture: (evt, gestureState) => true,
-            onMoveShouldSetPanResponder: (evt, gestureState) => true,
-            onMoveShouldSetPanResponderCapture: (evt, gestureState) => true,
+            onStartShouldSetPanResponder: (evt, gestureState) => this.props.touchEnabled,
+            onStartShouldSetPanResponderCapture: (evt, gestureState) => this.props.touchEnabled,
+            onMoveShouldSetPanResponder: (evt, gestureState) => this.props.touchEnabled,
+            onMoveShouldSetPanResponderCapture: (evt, gestureState) => this.props.touchEnabled,
 
             onPanResponderGrant: (evt, gestureState) => {
                 if (!this.props.touchEnabled) return;
@@ -295,6 +295,14 @@ class ImageEditor extends React.Component {
                 }
             },
             onPanResponderRelease: (evt, gestureState) => {
+                if (!this.props.touchEnabled) return;
+                if (this._path) {
+                    this.props.onStrokeEnd({ path: this._path, size: this._size, drawer: this.props.user });
+                    this._paths.push({ path: this._path, size: this._size, drawer: this.props.user });
+                }
+                UIManager.dispatchViewManagerCommand(this._handle, UIManager.getViewManagerConfig(RNImageEditor).Commands.endPath, []);
+            },
+            onPanResponderTerminate: (evt, gestureState) => {
                 if (!this.props.touchEnabled) return;
                 if (this._path) {
                     this.props.onStrokeEnd({ path: this._path, size: this._size, drawer: this.props.user });
